@@ -31,6 +31,7 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
     {
         std::cerr <<"The input file is not openable, maybe not available or path issue"<<'\n';
         result = INV_INPUT_FILE_UNREADABLE;
+        return result;
     }
     std::vector<string> database_filenames;
     
@@ -39,6 +40,7 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
     {
         std::string file ;
         getline(input_file, file);
+        cout << file << '\n';
         if (!file.empty())
         {
             database_filenames.push_back(file);
@@ -47,8 +49,9 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
 //     cout <<"size of database "<< database_filenames.size() << '\n';
     if (database_filenames.size() == 0 )
     {
-        std::cerr <<"Empty input file" <<'\n';
+        std::cerr <<"Empty input file or file does not exist" <<'\n';
         result = INV_INPUT_FILE_EMPTY;
+        return result;
     }
     input_file.close();
     // iterate through the files 
@@ -60,7 +63,7 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
         ifstream input(*it);
         if (!input)
         {
-            std::cerr <<"The input file is not openable, maybe not available or path issue"<<'\n';
+            std::cerr <<"The file being parsed is not openable, maybe not available or path issue"<<'\n';
         }
         else
         {
@@ -87,8 +90,9 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
                     }
                 }
             }
+            file_index +=1;
          }
-         file_index +=1;
+         
          ++it;
     }
            
@@ -96,11 +100,19 @@ int build_index(const std::string& filename, map<string, set<int>>& inverted_ind
     
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    
+    string input ;
+    if (argc == 2)
+    {
+        input = argv[1];
+    }
+    else
+    {
+        cout <<"Argument does not fit. Try inverter inputfile " << '\n';
+        return 0;
+    }
     map<string, set<int>> index;
-    string input ="inputs";
     int test = build_index(input, index);
     cout << "size of index table "<<index.size() << '\n';
     map<string, set<int>>::const_iterator it; // declare an iterator
